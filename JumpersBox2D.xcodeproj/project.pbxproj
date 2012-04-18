@@ -136,7 +136,7 @@
 		B4C351EE153F56D500AEEE43 /* CDXPropertyModifierAction.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C351ED153F56D500AEEE43 /* CDXPropertyModifierAction.m */; };
 		B4C351F2153F56D500AEEE43 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C351F1153F56D500AEEE43 /* main.m */; };
 		B4C351F5153F56D500AEEE43 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4C351F4153F56D500AEEE43 /* AppDelegate.mm */; };
-		B4C351F8153F56D500AEEE43 /* HelloWorldLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4C351F7153F56D500AEEE43 /* HelloWorldLayer.mm */; };
+		B4C351F8153F56D500AEEE43 /* JumpersLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */; };
 		B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4C351FA153F56D500AEEE43 /* GLES-Render.mm */; };
 		B4C351FD153F56D500AEEE43 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = B4C351FC153F56D500AEEE43 /* blocks.png */; };
 		B4C35204153F584000AEEE43 /* colors.png in Resources */ = {isa = PBXBuildFile; fileRef = B4C35203153F584000AEEE43 /* colors.png */; };
@@ -412,8 +412,8 @@
 		B4C351F1153F56D500AEEE43 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B4C351F3153F56D500AEEE43 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B4C351F4153F56D500AEEE43 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
-		B4C351F6153F56D500AEEE43 /* HelloWorldLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelloWorldLayer.h; sourceTree = "<group>"; };
-		B4C351F7153F56D500AEEE43 /* HelloWorldLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HelloWorldLayer.mm; sourceTree = "<group>"; };
+		B4C351F6153F56D500AEEE43 /* JumpersLayer.h */ = {isa = PBXFileReference; path = JumpersLayer.h; sourceTree = "<group>"; };
+		B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JumpersLayer.mm; sourceTree = "<group>"; };
 		B4C351F9153F56D500AEEE43 /* GLES-Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GLES-Render.h"; sourceTree = "<group>"; };
 		B4C351FA153F56D500AEEE43 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
 		B4C351FC153F56D500AEEE43 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
@@ -476,8 +476,8 @@
 				B4C35206153F5FB700AEEE43 /* Jumper.m */,
 				B4C351F3153F56D500AEEE43 /* AppDelegate.h */,
 				B4C351F4153F56D500AEEE43 /* AppDelegate.mm */,
-				B4C351F6153F56D500AEEE43 /* HelloWorldLayer.h */,
-				B4C351F7153F56D500AEEE43 /* HelloWorldLayer.mm */,
+				B4C351F6153F56D500AEEE43 /* JumpersLayer.h */,
+				B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */,
 				B4C351F9153F56D500AEEE43 /* GLES-Render.h */,
 				B4C351FA153F56D500AEEE43 /* GLES-Render.mm */,
 				B4C35062153F56D100AEEE43 /* Resources */,
@@ -1075,7 +1075,7 @@
 				B4C351EE153F56D500AEEE43 /* CDXPropertyModifierAction.m in Sources */,
 				B4C351F2153F56D500AEEE43 /* main.m in Sources */,
 				B4C351F5153F56D500AEEE43 /* AppDelegate.mm in Sources */,
-				B4C351F8153F56D500AEEE43 /* HelloWorldLayer.mm in Sources */,
+				B4C351F8153F56D500AEEE43 /* JumpersLayer.mm in Sources */,
 				B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */,
 				B4C35207153F5FB700AEEE43 /* Jumper.m in Sources */,
 			);

@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "HelloWorldLayer.h"
+#import "JumpersLayer.h"
 
 @implementation JumpersBox2DAppDelegate
 @synthesize window=window_, glView=glView_;
@@ -30,7 +30,7 @@
 	[window_ setAcceptsMouseMovedEvents:NO];
 	
 	
-	[director runWithScene:[HelloWorldLayer scene]];
+	[director runWithScene:[JumpersLayer scene]];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
