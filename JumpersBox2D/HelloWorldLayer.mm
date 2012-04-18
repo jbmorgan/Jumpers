@@ -9,6 +9,7 @@
 
 // Import the interfaces
 #import "HelloWorldLayer.h"
+#import "Jumper.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
@@ -51,6 +52,8 @@ enum {
 		
 		// enable touches
 		self.isMouseEnabled = YES;
+		
+		jumpers = [[NSMutableArray alloc] initWithCapacity:50];
 				
 		CGSize screenSize = [CCDirector sharedDirector].winSize;
 		CCLOG(@"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
@@ -127,10 +130,17 @@ enum {
 		for(int i = 0; i < 10; i++)
 			[self addNewSpriteWithCoords:CGPointMake(screenSize.width * CCRANDOM_0_1(), screenSize.height * CCRANDOM_0_1())];
 
+		[self initPopulationParameters];
 		
 		[self schedule: @selector(tick:)];
 	}
 	return self;
+}
+
+-(void)initPopulationParameters {
+	jumping_probability = 0.001;
+	jumping_strength = 10;
+	jumping_angular_deviation = 0.9;
 }
 
 -(void) draw
@@ -173,6 +183,7 @@ enum {
 
 	bodyDef.position.Set(p.x/PTM_RATIO, p.y/PTM_RATIO);
 	bodyDef.userData = sprite;
+
 	b2Body *body = world->CreateBody(&bodyDef);
 	
 	// Define another box shape for our dynamic body.
@@ -184,7 +195,10 @@ enum {
 	fixtureDef.shape = &dynamicBox;	
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
+	
 	body->CreateFixture(&fixtureDef);
+	
+	[jumpers addObject:[[Jumper alloc] initWithSprite:sprite]];
 }
 
 
@@ -208,6 +222,19 @@ enum {
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
 	{
 		if (b->GetUserData() != NULL) {
+			
+			if(CCRANDOM_0_1() < jumping_probability) {
+				
+				double theta = jumping_angular_deviation * CCRANDOM_0_1() * M_PI;
+				
+				double xForce = jumping_strength * cos(theta);
+				double yForce = jumping_strength * sin(theta);
+				
+				NSLog(@"%f - (%f, %f)", theta, xForce, yForce);
+				
+				b2Vec2 force = b2Vec2(xForce, yForce);
+				b->ApplyLinearImpulse(force, b->GetPosition());
+			}
 			//Synchronize the AtlasSprites position and rotation with the corresponding body
 			CCSprite *myActor = (CCSprite*)b->GetUserData();
 			myActor.position = CGPointMake( b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO);
