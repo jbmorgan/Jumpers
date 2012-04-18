@@ -15,7 +15,8 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 32
+#define PTM_RATIO 16
+#define PTM_RATIO_DEFAULT 32.0
 
 // enums that will be used as tags
 enum {
@@ -127,7 +128,7 @@ enum {
 		label.position = ccp( screenSize.width/2, screenSize.height-50);
 		*/
 		
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 70; i++)
 			[self addNewSpriteWithCoords:CGPointMake(screenSize.width * CCRANDOM_0_1(), screenSize.height * CCRANDOM_0_1())];
 
 		[self initPopulationParameters];
@@ -172,6 +173,7 @@ enum {
 	int idx = (int)(CCRANDOM_0_1() * 5);
 	int idy = (CCRANDOM_0_1() > .5 ? 0:1);
 	CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
+	sprite.scale = PTM_RATIO / PTM_RATIO_DEFAULT;
 	[batch addChild:sprite];
 	
 	sprite.position = ccp( p.x, p.y);
@@ -230,7 +232,10 @@ enum {
 				double xForce = jumping_strength * cos(theta);
 				double yForce = jumping_strength * sin(theta);
 				
-				NSLog(@"%f - (%f, %f)", theta, xForce, yForce);
+				double xPos = (b->GetPosition()).x;
+				double yPos = (b->GetPosition()).y;
+				
+				NSLog(@"Theta: %f\tPos: (%f, %f)\tForce: (%f, %f)", theta, xPos,yPos, xForce, yForce);
 				
 				b2Vec2 force = b2Vec2(xForce, yForce);
 				b->ApplyLinearImpulse(force, b->GetPosition());
