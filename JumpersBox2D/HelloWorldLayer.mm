@@ -112,15 +112,21 @@ enum {
 		
 		//Set up sprite
 		
-		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"blocks.png" capacity:150];
+		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"colors.png" capacity:150];
 		[self addChild:batch z:0 tag:kTagBatchNode];
 		
 		[self addNewSpriteWithCoords:ccp(screenSize.width/2, screenSize.height/2)];
 		
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
+		/*
+		 CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
 		[self addChild:label z:0];
 		[label setColor:ccc3(0,0,255)];
 		label.position = ccp( screenSize.width/2, screenSize.height-50);
+		*/
+		
+		for(int i = 0; i < 10; i++)
+			[self addNewSpriteWithCoords:CGPointMake(screenSize.width * CCRANDOM_0_1(), screenSize.height * CCRANDOM_0_1())];
+
 		
 		[self schedule: @selector(tick:)];
 	}
@@ -152,7 +158,8 @@ enum {
 	
 	//We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
 	//just randomly picking one of the images
-	int idx = (CCRANDOM_0_1() > .5 ? 0:1);
+	//int idx = (CCRANDOM_0_1() > .5 ? 0:1);
+	int idx = (int)(CCRANDOM_0_1() * 5);
 	int idy = (CCRANDOM_0_1() > .5 ? 0:1);
 	CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
 	[batch addChild:sprite];
