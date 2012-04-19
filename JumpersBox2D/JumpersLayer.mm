@@ -15,7 +15,7 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 16
+#define PTM_RATIO 8
 #define PTM_RATIO_DEFAULT 32.0
 
 // enums that will be used as tags
@@ -25,6 +25,7 @@ enum {
 	kTagAnimation1 = 1,
 };
 
+#define NUM_OF_JUMPERS 500
 
 // JumpersLayer implementation
 @implementation JumpersLayer
@@ -61,7 +62,7 @@ enum {
 		
 		// Define the gravity vector.
 		b2Vec2 gravity;
-		gravity.Set(0.0f, -10.0f);
+		gravity.Set(0.0f, -30.0f);
 		
 		// Do we want to let bodies sleep?
 		// This will speed up the physics simulation
@@ -127,11 +128,11 @@ enum {
 		[label setColor:ccc3(0,0,255)];
 		label.position = ccp( screenSize.width/2, screenSize.height-50);
 		*/
-		
-		for(int i = 0; i < 70; i++)
+		[self initPopulationParameters];
+
+		for(int i = 0; i < NUM_OF_JUMPERS; i++)
 			[self addNewSpriteWithCoords:CGPointMake(screenSize.width * CCRANDOM_0_1(), screenSize.height * CCRANDOM_0_1())];
 
-		[self initPopulationParameters];
 		
 		[self schedule: @selector(tick:)];
 	}
@@ -140,8 +141,9 @@ enum {
 
 -(void)initPopulationParameters {
 	jumping_probability = 0.001;
-	jumping_strength = 30;
+	jumping_strength = 80;
 	jumping_angular_deviation = 0.9;
+	bounciness = 0.7f;
 }
 
 -(void) draw
@@ -164,7 +166,7 @@ enum {
 
 -(void) addNewSpriteWithCoords:(CGPoint)p
 {
-	CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
+	//CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
 	CCSpriteBatchNode *batch = (CCSpriteBatchNode*) [self getChildByTag:kTagBatchNode];
 	
 	//We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
@@ -197,6 +199,7 @@ enum {
 	fixtureDef.shape = &dynamicBox;	
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
+	fixtureDef.restitution = bounciness;
 	
 	body->CreateFixture(&fixtureDef);
 	
@@ -225,17 +228,20 @@ enum {
 	{
 		if (b->GetUserData() != NULL) {
 			
-			if(CCRANDOM_0_1() < jumping_probability) {
+			if(CCRANDOM_0_1() < jumping_probability && [self isStationary:b]) {
 				
 				double theta = jumping_angular_deviation * CCRANDOM_0_1() * M_PI;
 				
 				double xForce = jumping_strength * cos(theta);
 				double yForce = jumping_strength * sin(theta);
 				
+				xForce = -fabs(xForce);
+				
+				/*
 				double xPos = (b->GetPosition()).x;
 				double yPos = (b->GetPosition()).y;
-				
 				NSLog(@"Theta: %f\tPos: (%f, %f)\tForce: (%f, %f)", theta, xPos,yPos, xForce, yForce);
+				*/
 				
 				b2Vec2 force = b2Vec2(xForce, yForce);
 				b->ApplyLinearImpulse(force, b->GetPosition());
@@ -246,6 +252,17 @@ enum {
 			myActor.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
 	}
+}
+
+//not yet implemented
+//should return TRUE is the body is 1) not moving and 2)has at least one edge in contact
+//with another body that is not moving 
+-(BOOL)isStationary:(b2Body *)b {
+		
+	if( b->GetLinearVelocity().Length() < 0.1)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 - (BOOL) ccMouseDown:(NSEvent *)event

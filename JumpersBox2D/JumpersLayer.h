@@ -24,6 +24,7 @@
 	double jumping_probability;
 	double jumping_strength;
 	double jumping_angular_deviation;
+	Float32 bounciness;
 }
 
 // returns a CCScene that contains the JumpersLayer as the only child
@@ -31,5 +32,5 @@
 // adds a new sprite at a given coordinate
 -(void) addNewSpriteWithCoords:(CGPoint)p;
 -(void)initPopulationParameters;
-
+-(BOOL)isStationary:(b2Body *)b;
 @end

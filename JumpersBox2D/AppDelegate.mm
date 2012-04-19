@@ -17,13 +17,12 @@
 	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	
 	[director setDisplayFPS:YES];
-	
 	[director setOpenGLView:glView_];
 
 	// EXPERIMENTAL stuff.
 	// 'Effects' don't work correctly when autoscale is turned on.
 	// Use kCCDirectorResize_NoScale if you don't want auto-scaling.
-	[director setResizeMode:kCCDirectorResize_NoScale];
+	[director setResizeMode:kCCDirectorResize_AutoScale];
 	[director setOriginalWinSize:CGSizeMake(1280, 720)];
 	
 	// Enable "moving" mouse event. Default no.
@@ -31,6 +30,7 @@
 	
 	
 	[director runWithScene:[JumpersLayer scene]];
+	[director setFullScreen:YES];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication
