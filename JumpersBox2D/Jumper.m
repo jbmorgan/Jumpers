@@ -10,6 +10,7 @@
 
 @implementation Jumper
 
+@synthesize sprite;
 
 -(id)initWithSprite:(CCSprite *)jumperSprite {
 	if(self = [super init]) {

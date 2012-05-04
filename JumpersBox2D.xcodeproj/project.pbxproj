@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B498350C155355E700D668EF /* tango.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350B155355E700D668EF /* tango.png */; };
+		B498350F1553618600D668EF /* stick.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350E1553618600D668EF /* stick.png */; };
+		B49835121553637A00D668EF /* Actor.m in Sources */ = {isa = PBXBuildFile; fileRef = B49835111553637A00D668EF /* Actor.m */; };
 		B4C35056153F56D100AEEE43 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C35055153F56D100AEEE43 /* QuartzCore.framework */; };
 		B4C35058153F56D100AEEE43 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C35057153F56D100AEEE43 /* OpenGL.framework */; };
 		B4C3505A153F56D100AEEE43 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C35059153F56D100AEEE43 /* OpenAL.framework */; };
@@ -144,6 +147,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B498350B155355E700D668EF /* tango.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tango.png; sourceTree = "<group>"; };
+		B498350E1553618600D668EF /* stick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stick.png; sourceTree = "<group>"; };
+		B49835101553637A00D668EF /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
+		B49835111553637A00D668EF /* Actor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Actor.m; sourceTree = "<group>"; };
 		B4C35051153F56D100AEEE43 /* JumpersBox2D.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JumpersBox2D.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C35055153F56D100AEEE43 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B4C35057153F56D100AEEE43 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -412,7 +419,7 @@
 		B4C351F1153F56D500AEEE43 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B4C351F3153F56D500AEEE43 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B4C351F4153F56D500AEEE43 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
-		B4C351F6153F56D500AEEE43 /* JumpersLayer.h */ = {isa = PBXFileReference; path = JumpersLayer.h; sourceTree = "<group>"; };
+		B4C351F6153F56D500AEEE43 /* JumpersLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JumpersLayer.h; sourceTree = "<group>"; };
 		B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JumpersLayer.mm; sourceTree = "<group>"; };
 		B4C351F9153F56D500AEEE43 /* GLES-Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GLES-Render.h"; sourceTree = "<group>"; };
 		B4C351FA153F56D500AEEE43 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
@@ -472,6 +479,8 @@
 		B4C35061153F56D100AEEE43 /* JumpersBox2D */ = {
 			isa = PBXGroup;
 			children = (
+				B49835101553637A00D668EF /* Actor.h */,
+				B49835111553637A00D668EF /* Actor.m */,
 				B4C35205153F5FB600AEEE43 /* Jumper.h */,
 				B4C35206153F5FB700AEEE43 /* Jumper.m */,
 				B4C351F3153F56D500AEEE43 /* AppDelegate.h */,
@@ -490,6 +499,8 @@
 		B4C35062153F56D100AEEE43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B498350E1553618600D668EF /* stick.png */,
+				B498350B155355E700D668EF /* tango.png */,
 				B4C35203153F584000AEEE43 /* colors.png */,
 				B4C3506A153F56D200AEEE43 /* fps_images.png */,
 				B4C3506C153F56D200AEEE43 /* icon.icns */,
@@ -946,6 +957,8 @@
 				B4C3506D153F56D200AEEE43 /* icon.icns in Resources */,
 				B4C351FD153F56D500AEEE43 /* blocks.png in Resources */,
 				B4C35204153F584000AEEE43 /* colors.png in Resources */,
+				B498350C155355E700D668EF /* tango.png in Resources */,
+				B498350F1553618600D668EF /* stick.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1078,6 +1091,7 @@
 				B4C351F8153F56D500AEEE43 /* JumpersLayer.mm in Sources */,
 				B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */,
 				B4C35207153F5FB700AEEE43 /* Jumper.m in Sources */,
+				B49835121553637A00D668EF /* Actor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1193,6 +1207,7 @@
 				B4C35202153F56D500AEEE43 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

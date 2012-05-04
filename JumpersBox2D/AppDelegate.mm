@@ -26,11 +26,11 @@
 	[director setOriginalWinSize:CGSizeMake(1280, 720)];
 	
 	// Enable "moving" mouse event. Default no.
-	[window_ setAcceptsMouseMovedEvents:NO];
+	[window_ setAcceptsMouseMovedEvents:YES];
 	
 	
 	[director runWithScene:[JumpersLayer scene]];
-	[director setFullScreen:YES];
+	[director setFullScreen:NO];
 }
 
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *) theApplication

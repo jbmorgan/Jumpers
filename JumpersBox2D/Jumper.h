@@ -15,4 +15,5 @@
 
 -(id)initWithSprite:(CCSprite *)jumperSprite;
 
+@property (nonatomic, retain) CCSprite *sprite;
 @end

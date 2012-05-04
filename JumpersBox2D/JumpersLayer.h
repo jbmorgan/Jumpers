@@ -12,25 +12,29 @@
 #import "Box2D.h"
 #import "GLES-Render.h"
 
-@class Jumper;
-
+#import "Actor.h"
 // JumpersLayer
 @interface JumpersLayer : CCLayer
 {
 	b2World* world;
 	GLESDebugDraw *m_debugDraw;
-	NSMutableArray *jumpers;
 	
+	/*
 	double jumping_probability;
 	double jumping_strength;
 	double jumping_angular_deviation;
-	Float32 bounciness;
+	 */
+	//Float32 bounciness;
 }
 
 // returns a CCScene that contains the JumpersLayer as the only child
 +(CCScene *) scene;
+
 // adds a new sprite at a given coordinate
--(void) addNewSpriteWithCoords:(CGPoint)p;
+-(void) addNewSpriteWithCoords:(CGPoint)p andType:(ActorType)type;
 -(void)initPopulationParameters;
 -(BOOL)isStationary:(b2Body *)b;
+
+@property (nonatomic, retain) NSMutableArray *actors;
+@property (nonatomic, retain) CCSprite *cursorSprite;
 @end
