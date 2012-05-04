@@ -19,11 +19,11 @@
 			case kBird:
 				sprite = [[CCSprite alloc] initWithFile:@"tango.png"];
 				bounciness = 0.6f;
-				density = 1.0f;
+				density = 2.0f;
 				break;
 			case kStick:
 				sprite = [[CCSprite alloc] initWithFile:@"stick.png"];
-				bounciness = 0.1f;
+				bounciness = 0.01f;
 				density = 0.5f;
 			default:
 				break;

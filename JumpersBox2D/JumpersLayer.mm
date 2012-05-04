@@ -14,8 +14,11 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 32
+#define PTM_RATIO 8
 #define PTM_RATIO_DEFAULT 32.0
+
+#define KEYBOARD_A 97
+#define KEYBOARD_SPACE 32
 
 // enums that will be used as tags
 enum {
@@ -29,7 +32,7 @@ enum {
 // JumpersLayer implementation
 @implementation JumpersLayer
 
-@synthesize actors, cursorSprite;
+@synthesize actors, cursorSprite, cursorMode;
 
 +(CCScene *) scene
 {
@@ -121,7 +124,7 @@ enum {
 		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"colors.png" capacity:150];
 		[self addChild:batch z:0 tag:kTagBatchNode];
 		
-		[self addNewSpriteWithCoords:ccp(screenSize.width/2, screenSize.height/2) andType:kBird];
+		//[self addNewSpriteWithCoords:ccp(screenSize.width/2, screenSize.height/2) andType:kBird];
 		
 		/*
 		 CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
@@ -137,6 +140,9 @@ enum {
 		cursorSprite = [[CCSprite alloc] initWithFile:@"stick.png"];
 		cursorSprite.scale = PTM_RATIO / PTM_RATIO_DEFAULT;
 		[self addChild:cursorSprite];
+		cursorMode = kVertical;
+		
+		[[CCEventDispatcher sharedDispatcher] addKeyboardDelegate:self priority:0];
 		
 		[self schedule: @selector(tick:)];
 	}
@@ -145,10 +151,10 @@ enum {
 
 -(void)initPopulationParameters {
 	/*
-	jumping_probability = 0.1;
-	jumping_strength = 300;
-	jumping_angular_deviation = 0.9;
-	bounciness = 0.1f;
+	 jumping_probability = 0.1;
+	 jumping_strength = 300;
+	 jumping_angular_deviation = 0.9;
+	 bounciness = 0.1f;
 	 */
 }
 
@@ -181,9 +187,9 @@ enum {
 	//int idx = (int)(CCRANDOM_0_1() * 5);
 	//int idy = (CCRANDOM_0_1() > .5 ? 0:1);
 	/*
-	CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
-	sprite = [[CCSprite alloc] initWithFile:@"tango.png"];
-	sprite = [[CCSprite alloc] initWithFile:@"stick.png"];
+	 CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
+	 sprite = [[CCSprite alloc] initWithFile:@"tango.png"];
+	 sprite = [[CCSprite alloc] initWithFile:@"stick.png"];
 	 */
 	
 	Actor *newActor = [[Actor alloc] initWithType:type];
@@ -210,7 +216,7 @@ enum {
 	// Define another box shape for our dynamic body.
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
-
+	
 	b2PolygonShape stickBox;
 	stickBox.SetAsBox(0.125f, 2.0f);
 	
@@ -237,6 +243,23 @@ enum {
 	fixtureDef.restitution = newActor.bounciness;
 	
 	body->CreateFixture(&fixtureDef);
+	
+	
+	if(cursorMode == kHorizontal) {
+		float angle = M_PI * 0.5; //or whatever you angle is
+		b2Vec2 pos = body->GetPosition();
+		body->SetTransform(pos, angle);
+	}
+	
+	if(newActor.type == kBird) {
+		double theta =  CCRANDOM_0_1() * M_PI * 0.25;
+		
+		double xForce = 100 * cos(theta);
+		double yForce = 100 * sin(theta);
+		
+		b2Vec2 force = b2Vec2(xForce, yForce);
+		body->ApplyLinearImpulse(force, body->GetPosition());
+	}
 	
 	[actors addObject:newActor];
 }
@@ -275,25 +298,25 @@ enum {
 			Actor *actor = (Actor *)(b->GetUserData());
 			
 			/*
-			if(CCRANDOM_0_1() < jumping_probability && [self isStationary:b]) {
-				
-				double theta = jumping_angular_deviation * CCRANDOM_0_1() * M_PI;
-				
-				double xForce = jumping_strength * cos(theta);
-				double yForce = jumping_strength * sin(theta);
-				
-				if(highestStationaryBody->GetPosition().x < b->GetPosition().x)
-					xForce = -fabs(xForce);
-				else
-					xForce = fabs(xForce);
-				
-				b2Vec2 force = b2Vec2(xForce, yForce);
-				b->ApplyLinearImpulse(force, b->GetPosition());
-			}
+			 if(CCRANDOM_0_1() < jumping_probability && [self isStationary:b]) {
+			 
+			 double theta = jumping_angular_deviation * CCRANDOM_0_1() * M_PI;
+			 
+			 double xForce = jumping_strength * cos(theta);
+			 double yForce = jumping_strength * sin(theta);
+			 
+			 if(highestStationaryBody->GetPosition().x < b->GetPosition().x)
+			 xForce = -fabs(xForce);
+			 else
+			 xForce = fabs(xForce);
+			 
+			 b2Vec2 force = b2Vec2(xForce, yForce);
+			 b->ApplyLinearImpulse(force, b->GetPosition());
+			 }
 			 */
 			
 			//Synchronize the AtlasSprites position and rotation with the corresponding body
-
+			
 			actor.sprite.position = CGPointMake( b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO);
 			actor.sprite.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
@@ -323,6 +346,39 @@ enum {
 	[self addNewSpriteWithCoords: location andType:kStick];
 	
 	return YES;
+}
+
+-(BOOL)ccKeyDown:(NSEvent *)event {
+	NSNumber *keyPressed = [NSNumber numberWithUnsignedInt:[[event characters] characterAtIndex:0]];
+	
+	NSLog(@"%i",[keyPressed intValue]);
+	switch ([keyPressed intValue]) {
+		case KEYBOARD_A:
+			[self changeCursorOrientation];
+			break;
+		case KEYBOARD_SPACE:
+			[self fireBird];
+			break;
+		default:
+			break;
+	}
+	
+	return TRUE;
+}
+
+-(void)fireBird {
+	[self addNewSpriteWithCoords:CGPointMake(50, 50) andType:kBird];
+}
+
+-(void)changeCursorOrientation {
+	if(cursorMode == kVertical) {
+		cursorMode = kHorizontal;
+		cursorSprite.rotation = 90;
+	} else {
+		cursorMode = kVertical;
+		cursorSprite.rotation = 0;
+		
+	}
 }
 
 // on "dealloc" you need to release all your retained objects

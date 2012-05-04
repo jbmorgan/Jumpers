@@ -14,6 +14,12 @@
 
 #import "Actor.h"
 // JumpersLayer
+
+typedef enum CursorMode {
+	kVertical,
+	kHorizontal
+} CursorMode;
+
 @interface JumpersLayer : CCLayer
 {
 	b2World* world;
@@ -37,4 +43,5 @@
 
 @property (nonatomic, retain) NSMutableArray *actors;
 @property (nonatomic, retain) CCSprite *cursorSprite;
+@property CursorMode cursorMode;
 @end
