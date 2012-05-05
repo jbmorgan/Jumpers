@@ -14,11 +14,15 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 8
+#define PTM_RATIO 16
 #define PTM_RATIO_DEFAULT 32.0
 
 #define KEYBOARD_A 97
 #define KEYBOARD_SPACE 32
+
+#define HIGH_ACCURACY
+
+#define WORLD_BOUNDS_EXTRA_WIDTH 10000
 
 // enums that will be used as tags
 enum {
@@ -103,11 +107,12 @@ enum {
 		b2PolygonShape groundBox;		
 		
 		// bottom
-		groundBox.SetAsEdge(b2Vec2(0,0), b2Vec2(screenSize.width/PTM_RATIO,0));
+		groundBox.SetAsEdge(b2Vec2(0,0), b2Vec2((screenSize.width+WORLD_BOUNDS_EXTRA_WIDTH)/PTM_RATIO,0));
 		groundBody->CreateFixture(&groundBox,0);
 		
 		// top
-		groundBox.SetAsEdge(b2Vec2(0,screenSize.height/PTM_RATIO), b2Vec2(screenSize.width/PTM_RATIO,screenSize.height/PTM_RATIO));
+		groundBox.SetAsEdge(b2Vec2(0,screenSize.height/PTM_RATIO), b2Vec2((screenSize.width+WORLD_BOUNDS_EXTRA_WIDTH)/PTM_RATIO,
+																		  screenSize.height/PTM_RATIO));
 		groundBody->CreateFixture(&groundBox,0);
 		
 		// left
@@ -115,7 +120,7 @@ enum {
 		groundBody->CreateFixture(&groundBox,0);
 		
 		// right
-		groundBox.SetAsEdge(b2Vec2(screenSize.width/PTM_RATIO,screenSize.height/PTM_RATIO), b2Vec2(screenSize.width/PTM_RATIO,0));
+		groundBox.SetAsEdge(b2Vec2((screenSize.width+WORLD_BOUNDS_EXTRA_WIDTH)/PTM_RATIO,screenSize.height/PTM_RATIO), b2Vec2((screenSize.width+WORLD_BOUNDS_EXTRA_WIDTH)/PTM_RATIO,0));
 		groundBody->CreateFixture(&groundBox,0);
 		
 		
@@ -133,9 +138,11 @@ enum {
 		 label.position = ccp( screenSize.width/2, screenSize.height-50);
 		 */
 		[self initPopulationParameters];
+
 		
-		for(int i = 0; i < NUM_OF_JUMPERS; i++)
-			[self addNewSpriteWithCoords:CGPointMake(screenSize.width * CCRANDOM_0_1(), screenSize.height * CCRANDOM_0_1()) andType:kStick];
+		
+		[self buildTower];
+		
 		
 		cursorSprite = [[CCSprite alloc] initWithFile:@"stick.png"];
 		cursorSprite.scale = PTM_RATIO / PTM_RATIO_DEFAULT;
@@ -149,6 +156,48 @@ enum {
 	return self;
 }
 
+-(void)buildTower {
+	int width = 5;
+	cursorMode = kVertical;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT, 32*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	width--;
+	cursorMode = kHorizontal;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*2*PTM_RATIO/PTM_RATIO_DEFAULT, 70*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	cursorMode = kVertical;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+(i+1)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT-32*2*PTM_RATIO/PTM_RATIO_DEFAULT, 106*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	width--;
+	cursorMode = kHorizontal;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*2*2*PTM_RATIO/PTM_RATIO_DEFAULT, 142*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	cursorMode = kVertical;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+(i+1)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT, 180*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	width--;
+	cursorMode = kHorizontal;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*3*2*PTM_RATIO/PTM_RATIO_DEFAULT, 216*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	cursorMode = kVertical;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+(i+2)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT-32 *2*PTM_RATIO/PTM_RATIO_DEFAULT, 254*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	width--;
+	cursorMode = kHorizontal;
+	for(int i = 0; i < width; i++)
+		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*4*2*PTM_RATIO/PTM_RATIO_DEFAULT, 290*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	
+	[self addNewSpriteWithCoords:CGPointMake(800+128*2*PTM_RATIO/PTM_RATIO_DEFAULT,318*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kPig];
+
+}
+
 -(void)initPopulationParameters {
 	/*
 	 jumping_probability = 0.1;
@@ -156,6 +205,28 @@ enum {
 	 jumping_angular_deviation = 0.9;
 	 bounciness = 0.1f;
 	 */
+}
+
+-(void)resetSimulation {
+	
+	//NSMutableArray *bodiesToDestroy = [[NSMutableArray alloc] initWithCapacity:100];
+	
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()){
+		Actor *userData = (Actor *)b->GetUserData();
+		
+		if(userData && [userData isKindOfClass:[Actor class]]) {
+			[self removeChild:userData.sprite cleanup:YES];
+			world->DestroyBody(b);
+		}
+	}
+	/*
+	while(bodiesToDestroy.count > 0) {
+		b2Body *b = (b2Body *)[bodiesToDestroy objectAtIndex:0];
+		[bodiesToDestroy removeObjectAtIndex:0];
+		world->DestroyBody(b);		
+	}*/
+	
+	[self buildTower];
 }
 
 -(void) draw
@@ -167,7 +238,7 @@ enum {
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
-	world->DrawDebugData();
+	//world->DrawDebugData();
 	
 	// restore default GL states
 	glEnable(GL_TEXTURE_2D);
@@ -218,10 +289,13 @@ enum {
 	dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
 	
 	b2PolygonShape stickBox;
-	stickBox.SetAsBox(0.125f, 2.0f);
+	stickBox.SetAsBox(0.25f, 2.0f);
 	
 	b2CircleShape circle;
-	circle.m_radius = 0.5f;
+	circle.m_radius = 0.45f;
+	
+	b2CircleShape pigShape;
+	pigShape.m_radius = 0.9f;
 	
 	// Define the dynamic body fixture.
 	b2FixtureDef fixtureDef;
@@ -232,6 +306,9 @@ enum {
 			break;
 		case kStick:
 			fixtureDef.shape = &stickBox;
+			break;
+		case kPig:
+			fixtureDef.shape = &pigShape;
 			break;
 		default:
 			break;
@@ -273,12 +350,10 @@ enum {
 	//You need to make an informed choice, the following URL is useful
 	//http://gafferongames.com/game-physics/fix-your-timestep/
 	
-	int32 velocityIterations = 8;
-	int32 positionIterations = 1;
-	
-	// Instruct the world to perform a single step of simulation. It is
-	// generally best to keep the time step and iterations fixed.
-	world->Step(dt, velocityIterations, positionIterations);
+	int32 velocityIterations = 128;
+	int32 positionIterations = 128;
+
+	world->Step(dt*0.5, velocityIterations, positionIterations);
 	
 	b2Body *highestStationaryBody = NULL;
 	CGPoint positionOfHighest = CGPointMake(0, -9999);
@@ -291,32 +366,12 @@ enum {
 	}
 	
 	//Iterate over the bodies in the physics world
-	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
-	{
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
 		
 		if (b->GetUserData() != NULL) {
 			Actor *actor = (Actor *)(b->GetUserData());
 			
-			/*
-			 if(CCRANDOM_0_1() < jumping_probability && [self isStationary:b]) {
-			 
-			 double theta = jumping_angular_deviation * CCRANDOM_0_1() * M_PI;
-			 
-			 double xForce = jumping_strength * cos(theta);
-			 double yForce = jumping_strength * sin(theta);
-			 
-			 if(highestStationaryBody->GetPosition().x < b->GetPosition().x)
-			 xForce = -fabs(xForce);
-			 else
-			 xForce = fabs(xForce);
-			 
-			 b2Vec2 force = b2Vec2(xForce, yForce);
-			 b->ApplyLinearImpulse(force, b->GetPosition());
-			 }
-			 */
-			
 			//Synchronize the AtlasSprites position and rotation with the corresponding body
-			
 			actor.sprite.position = CGPointMake( b->GetPosition().x * PTM_RATIO, b->GetPosition().y * PTM_RATIO);
 			actor.sprite.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
@@ -350,11 +405,19 @@ enum {
 
 -(BOOL)ccKeyDown:(NSEvent *)event {
 	NSNumber *keyPressed = [NSNumber numberWithUnsignedInt:[[event characters] characterAtIndex:0]];
+	b2Vec2 gravity;
+	gravity.Set(0.0f, 50-CCRANDOM_0_1()*100);
 	
 	NSLog(@"%i",[keyPressed intValue]);
 	switch ([keyPressed intValue]) {
 		case KEYBOARD_A:
 			[self changeCursorOrientation];
+			break;
+		case 103:
+			world->SetGravity(gravity);
+			break;
+		case 114:
+			[self resetSimulation];
 			break;
 		case KEYBOARD_SPACE:
 			[self fireBird];

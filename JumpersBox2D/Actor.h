@@ -12,6 +12,7 @@
 typedef enum ActorType {
 	kBird = 1,
 	kStick = 2,
+	kPig = 3,
 } ActorType;
 
 @interface Actor : CCNode {

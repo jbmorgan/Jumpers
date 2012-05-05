@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B49833FB15557D3F006DB062 /* pig.png in Resources */ = {isa = PBXBuildFile; fileRef = B49833FA15557D3F006DB062 /* pig.png */; };
 		B498350C155355E700D668EF /* tango.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350B155355E700D668EF /* tango.png */; };
 		B498350F1553618600D668EF /* stick.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350E1553618600D668EF /* stick.png */; };
 		B49835121553637A00D668EF /* Actor.m in Sources */ = {isa = PBXBuildFile; fileRef = B49835111553637A00D668EF /* Actor.m */; };
@@ -147,6 +148,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B49833FA15557D3F006DB062 /* pig.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pig.png; sourceTree = "<group>"; };
 		B498350B155355E700D668EF /* tango.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tango.png; sourceTree = "<group>"; };
 		B498350E1553618600D668EF /* stick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stick.png; sourceTree = "<group>"; };
 		B49835101553637A00D668EF /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
@@ -499,6 +501,7 @@
 		B4C35062153F56D100AEEE43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B49833FA15557D3F006DB062 /* pig.png */,
 				B498350E1553618600D668EF /* stick.png */,
 				B498350B155355E700D668EF /* tango.png */,
 				B4C35203153F584000AEEE43 /* colors.png */,
@@ -959,6 +962,7 @@
 				B4C35204153F584000AEEE43 /* colors.png in Resources */,
 				B498350C155355E700D668EF /* tango.png in Resources */,
 				B498350F1553618600D668EF /* stick.png in Resources */,
+				B49833FB15557D3F006DB062 /* pig.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
