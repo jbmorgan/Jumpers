@@ -16,7 +16,7 @@
 {
 	CCDirectorMac *director = (CCDirectorMac*) [CCDirector sharedDirector];
 	
-	[director setDisplayFPS:YES];
+	[director setDisplayFPS:NO];
 	[director setOpenGLView:glView_];
 
 	// EXPERIMENTAL stuff.
@@ -26,7 +26,7 @@
 	[director setResizeMode:kCCDirectorResize_AutoScale];
 	
 	// Enable "moving" mouse event. Default no.
-	[window_ setAcceptsMouseMovedEvents:YES];
+	[window_ setAcceptsMouseMovedEvents:NO];
 	
 	
 	[director runWithScene:[JumpersLayer scene]];

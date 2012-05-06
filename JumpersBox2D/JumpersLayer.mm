@@ -38,7 +38,7 @@ enum {
 // JumpersLayer implementation
 @implementation JumpersLayer
 
-@synthesize actors, simulationResults, cursorSprite, cursorMode, averageHeight, heightLabel, currentAngle, currentForce, timeSinceBallLaunched, simulationState, lastSuccessor;
+@synthesize actors, simulationResults, cursorSprite, cursorMode, averageHeight, heightLabel, currentAngle, currentForce, timeSinceBallLaunched, simulationState, lastSuccessor, maxLabel;
 
 +(CCScene *) scene
 {
@@ -61,9 +61,13 @@ enum {
 	// always call "super" init
 	// Apple recommends to re-assign "self" with the "super" return value
 	if( (self=[super init])) {
-		
+
+		srandom(time(NULL));
+		CCLayerColor *colorLayer = [[CCLayerColor alloc] initWithColor:ccc4(135, 190, 224, 255)];
+		[self addChild:colorLayer z:0];
+
 		// enable touches
-		self.isMouseEnabled = YES;
+		//self.isMouseEnabled = YES;
 		
 		actors = [[NSMutableArray alloc] initWithCapacity:50];
 		simulationResults = [[NSMutableArray alloc] initWithCapacity:50];
@@ -135,12 +139,19 @@ enum {
 		[heightLabel setColor:ccc3(222,222,222)];
 		heightLabel.position = ccp( 120,screenSize.height - 40);
 		
+		maxLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Max found at ", averageHeight] fontName:@"Marker Felt" fontSize:32];
+		[self addChild:maxLabel z:100];
+		[maxLabel setColor:ccc3(222,222,222)];
+		maxLabel.visible = FALSE;
+		maxLabel.position = ccp( screenSize.width*0.5,screenSize.height*0.5);
+
+		
 		cursorSprite = [[CCSprite alloc] initWithFile:@"stick.png"];
 		cursorSprite.scale = PTM_RATIO / PTM_RATIO_DEFAULT;
-		[self addChild:cursorSprite];
+		//[self addChild:cursorSprite];
 		cursorMode = kVertical;
 		
-		currentForce = 90;
+		currentForce = 40+50*CCRANDOM_0_1();
 		currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
 
 		simulationState = kInitialState;
@@ -274,15 +285,13 @@ enum {
 			break;
 	}
 	
-	
 	fixtureDef.density = newActor.density;
 	fixtureDef.friction = newActor.friction;
 	fixtureDef.restitution = newActor.bounciness;
 	
 	body->CreateFixture(&fixtureDef);
 	
-	
-	if(cursorMode == kHorizontal) {
+	if(cursorMode == kHorizontal && newActor.type == kStick) {
 		float angle = M_PI * 0.5; //or whatever your angle is
 		b2Vec2 pos = body->GetPosition();
 		body->SetTransform(pos, angle);
@@ -305,23 +314,12 @@ enum {
 -(void) tick: (ccTime) dt
 {
 	if(timeSinceBallLaunched >= 0)
-		timeSinceBallLaunched += dt;
+		timeSinceBallLaunched += 1.0/90.0;
 	
 	int32 velocityIterations = 8;
 	int32 positionIterations = 1;
 
 	world->Step(1.0/90.0, velocityIterations, positionIterations);
-	//world->Step(1.0/120.0, velocityIterations, positionIterations);
-	
-	b2Body *highestStationaryBody = NULL;
-	CGPoint positionOfHighest = CGPointMake(0, -9999);
-	
-	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()){
-		if(b->GetPosition().y > positionOfHighest.y && [self isStationary:b]) {
-			highestStationaryBody = b;
-			positionOfHighest = CGPointMake(b->GetPosition().x, b->GetPosition().y);
-		}
-	}
 	
 	//Iterate over the bodies in the physics world
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
@@ -338,7 +336,7 @@ enum {
 	[self updateAverageHeight];
 	heightLabel.string =[NSString stringWithFormat:@"Avg height: %.2f", averageHeight];
 	
-	if(timeSinceBallLaunched > 10) 
+	if(timeSinceBallLaunched > 7) 
 		[self runNextSuccessor];
 }
 
@@ -356,6 +354,9 @@ enum {
 }
 
 -(void)runNextSuccessor {
+	if(simulationState == kCompleted)
+		return;
+	
 	timeSinceBallLaunched = 0;
 	[self recordResults];
 	
@@ -405,18 +406,20 @@ enum {
 		lastSuccessor = bestResult;
 	else {
 		NSLog(@"Local maximum found!");
+		NSLog(@"Height\t%.2f", lastSuccessor.heightAfterSimulation);
+		NSLog(@"Angle\t%.2f", lastSuccessor.angle);
+		NSLog(@"Force\t%.2f", lastSuccessor.force);
+		simulationState = kCompleted;
+		maxLabel.string = [NSString stringWithFormat:@"Local max found at %.2f radians with force %.2f", currentAngle, currentForce];
+		maxLabel.visible = YES;
 	}
 }
 
 -(void)generateNextSuccessors {
 	[self recordResults];
-
 	[self resetSimulation];
 }
 
-//not yet implemented
-//should return TRUE is the body is 1) not moving and 2)has at least one edge in contact
-//with another body that is not moving 
 -(BOOL)isStationary:(b2Body *)b {
 	
 	if( b->GetLinearVelocity().Length() < 0.1)
@@ -433,8 +436,8 @@ enum {
 
 - (BOOL) ccMouseDown:(NSEvent *)event
 {
-	CGPoint location = [(CCDirectorMac*)[CCDirector sharedDirector] convertEventToGL:event];
-	[self addNewSpriteWithCoords: location andType:kStick];
+	//CGPoint location = [(CCDirectorMac*)[CCDirector sharedDirector] convertEventToGL:event];
+	//[self addNewSpriteWithCoords: location andType:kStick];
 	
 	return YES;
 }
@@ -454,11 +457,14 @@ enum {
 			break;
 		case 114:
 			[self resetSimulation];
+			maxLabel.visible = NO;
 			lastSuccessor = nil;
+			currentForce = 40+50*CCRANDOM_0_1();
+			currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
 			break;
 		case KEYBOARD_SPACE:
 			[self fireBird];
-			currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
+			//currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
 			break;
 		default:
 			break;

@@ -150,7 +150,7 @@
 
 /* Begin PBXFileReference section */
 		B49833FA15557D3F006DB062 /* pig.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pig.png; sourceTree = "<group>"; };
-		B49833FD1555D4FC006DB062 /* SimulationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SimulationResult.h; sourceTree = "<group>"; };
+		B49833FD1555D4FC006DB062 /* SimulationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulationResult.h; sourceTree = "<group>"; };
 		B49833FE1555D4FC006DB062 /* SimulationResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulationResult.m; sourceTree = "<group>"; };
 		B498350B155355E700D668EF /* tango.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tango.png; sourceTree = "<group>"; };
 		B498350E1553618600D668EF /* stick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stick.png; sourceTree = "<group>"; };
@@ -486,19 +486,19 @@
 			children = (
 				B49835101553637A00D668EF /* Actor.h */,
 				B49835111553637A00D668EF /* Actor.m */,
-				B4C35205153F5FB600AEEE43 /* Jumper.h */,
-				B4C35206153F5FB700AEEE43 /* Jumper.m */,
 				B4C351F3153F56D500AEEE43 /* AppDelegate.h */,
 				B4C351F4153F56D500AEEE43 /* AppDelegate.mm */,
-				B4C351F6153F56D500AEEE43 /* JumpersLayer.h */,
-				B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */,
 				B4C351F9153F56D500AEEE43 /* GLES-Render.h */,
 				B4C351FA153F56D500AEEE43 /* GLES-Render.mm */,
-				B4C35062153F56D100AEEE43 /* Resources */,
-				B4C3506F153F56D200AEEE43 /* libs */,
-				B4C351EF153F56D500AEEE43 /* Supporting Files */,
+				B4C35205153F5FB600AEEE43 /* Jumper.h */,
+				B4C35206153F5FB700AEEE43 /* Jumper.m */,
+				B4C351F6153F56D500AEEE43 /* JumpersLayer.h */,
+				B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */,
 				B49833FD1555D4FC006DB062 /* SimulationResult.h */,
 				B49833FE1555D4FC006DB062 /* SimulationResult.m */,
+				B4C3506F153F56D200AEEE43 /* libs */,
+				B4C35062153F56D100AEEE43 /* Resources */,
+				B4C351EF153F56D500AEEE43 /* Supporting Files */,
 			);
 			path = JumpersBox2D;
 			sourceTree = "<group>";
@@ -506,14 +506,14 @@
 		B4C35062153F56D100AEEE43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B49833FA15557D3F006DB062 /* pig.png */,
-				B498350E1553618600D668EF /* stick.png */,
-				B498350B155355E700D668EF /* tango.png */,
+				B4C351FC153F56D500AEEE43 /* blocks.png */,
 				B4C35203153F584000AEEE43 /* colors.png */,
 				B4C3506A153F56D200AEEE43 /* fps_images.png */,
 				B4C3506C153F56D200AEEE43 /* icon.icns */,
 				B4C3506E153F56D200AEEE43 /* Info.plist */,
-				B4C351FC153F56D500AEEE43 /* blocks.png */,
+				B49833FA15557D3F006DB062 /* pig.png */,
+				B498350E1553618600D668EF /* stick.png */,
+				B498350B155355E700D668EF /* tango.png */,
 				B4C35063153F56D100AEEE43 /* English.lproj */,
 			);
 			name = Resources;

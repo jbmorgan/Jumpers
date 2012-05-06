@@ -27,7 +27,8 @@ typedef enum SimulationState {
 	kSuccessorAngleMinus,
 	kSuccessorForcePlus,
 	kSuccessorForceMinus,
-	kEvaluateSimulations
+	kEvaluateSimulations,
+	kCompleted
 } SimulationState;
 
 @interface JumpersLayer : CCLayer
@@ -47,6 +48,7 @@ typedef enum SimulationState {
 @property (nonatomic, retain) NSMutableArray *simulationResults;
 @property (nonatomic, retain) CCSprite *cursorSprite;
 @property (nonatomic, retain) CCLabelTTF *heightLabel;
+@property (nonatomic, retain) CCLabelTTF *maxLabel;
 @property CursorMode cursorMode;
 @property SimulationState simulationState;
 @property double averageHeight;
