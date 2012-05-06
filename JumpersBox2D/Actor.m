@@ -10,7 +10,7 @@
 
 
 @implementation Actor
-@synthesize sprite, type, bounciness, density;
+@synthesize sprite, type, bounciness, density, friction;
 
 -(id)initWithType:(ActorType)t {
 	if(self = [super init]) {
@@ -18,18 +18,21 @@
 		switch (t) {
 			case kBird:
 				sprite = [[CCSprite alloc] initWithFile:@"tango.png"];
-				bounciness = 0.9f;
-				density = 2.0f;
+				bounciness = 0.2f;
+				density = 2.4f;
+				friction = 0.9f;
 				break;
 			case kStick:
 				sprite = [[CCSprite alloc] initWithFile:@"stick.png"];
-				bounciness = 0.01f;
-				density = 1.0f;
+				bounciness = 0.001f;
+				density = 1.8f;
+				friction = 0.99f;
 				break;
 			case kPig:
 				sprite = [[CCSprite alloc] initWithFile:@"pig.png"];
 				bounciness = 0.2f;
 				density = 5.0f;
+				friction = 0.9f;
 			default:
 				break;
 		}

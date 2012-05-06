@@ -9,12 +9,13 @@
 
 // Import the interfaces
 #import "JumpersLayer.h"
+#import "SimulationResult.h"
 
 //Pixel to metres ratio. Box2D uses metres as the unit for measurement.
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 16
+#define PTM_RATIO 8
 #define PTM_RATIO_DEFAULT 32.0
 
 #define KEYBOARD_A 97
@@ -36,7 +37,7 @@ enum {
 // JumpersLayer implementation
 @implementation JumpersLayer
 
-@synthesize actors, cursorSprite, cursorMode;
+@synthesize actors, simulationResults, cursorSprite, cursorMode, averageHeight, heightLabel, currentAngle, currentForce, timeSinceBallLaunched, simulationState;
 
 +(CCScene *) scene
 {
@@ -64,6 +65,7 @@ enum {
 		self.isMouseEnabled = YES;
 		
 		actors = [[NSMutableArray alloc] initWithCapacity:50];
+		simulationResults = [[NSMutableArray alloc] initWithCapacity:50];
 		
 		CGSize screenSize = [CCDirector sharedDirector].winSize;
 		CCLOG(@"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
@@ -124,32 +126,25 @@ enum {
 		groundBody->CreateFixture(&groundBox,0);
 		
 		
-		//Set up sprite
-		
-		CCSpriteBatchNode *batch = [CCSpriteBatchNode batchNodeWithFile:@"colors.png" capacity:150];
-		[self addChild:batch z:0 tag:kTagBatchNode];
-		
-		//[self addNewSpriteWithCoords:ccp(screenSize.width/2, screenSize.height/2) andType:kBird];
-		
-		/*
-		 CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
-		 [self addChild:label z:0];
-		 [label setColor:ccc3(0,0,255)];
-		 label.position = ccp( screenSize.width/2, screenSize.height-50);
-		 */
-		[self initPopulationParameters];
-
-		
-		
 		[self buildTower];
-		
+		[self updateAverageHeight];
+
+		heightLabel = [CCLabelTTF labelWithString:[NSString stringWithFormat:@"Avg height: %.2f", averageHeight] fontName:@"Marker Felt" fontSize:32];
+		[self addChild:heightLabel z:0];
+		[heightLabel setColor:ccc3(222,222,222)];
+		heightLabel.position = ccp( 120,screenSize.height - 40);
 		
 		cursorSprite = [[CCSprite alloc] initWithFile:@"stick.png"];
 		cursorSprite.scale = PTM_RATIO / PTM_RATIO_DEFAULT;
 		[self addChild:cursorSprite];
 		cursorMode = kVertical;
 		
-		[[CCEventDispatcher sharedDispatcher] addKeyboardDelegate:self priority:0];
+		currentForce = 90;
+		currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
+
+		simulationState = kInitialState;
+		
+		[[CCEventDispatcher sharedDispatcher] addKeyboardDelegate:self priority:0];		
 		
 		[self schedule: @selector(tick:)];
 	}
@@ -157,61 +152,46 @@ enum {
 }
 
 -(void)buildTower {
-	int width = 5;
-	cursorMode = kVertical;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT, 32*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
 	
-	width--;
-	cursorMode = kHorizontal;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*2*PTM_RATIO/PTM_RATIO_DEFAULT, 70*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	int width = 10;
+	int height = width-1;
+	int left = 500;
 	
-	cursorMode = kVertical;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+(i+1)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT-32*2*PTM_RATIO/PTM_RATIO_DEFAULT, 106*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+	for(int level = 0; level < height; level++) {
+		
+		cursorMode = kVertical;
+		for(int i = 0; i < width; i++)
+			[self addNewSpriteWithCoords:CGPointMake(left+(i+level*.5)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT, (32+72*level)*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+		
+		width--;
+		cursorMode = kHorizontal;
+		for(int i = 0; i < width; i++)
+			[self addNewSpriteWithCoords:CGPointMake(left+(i+level*.5)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*2*PTM_RATIO/PTM_RATIO_DEFAULT, (70+72*level)*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
+		
+	}
 	
-	width--;
-	cursorMode = kHorizontal;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*2*2*PTM_RATIO/PTM_RATIO_DEFAULT, 142*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
-	
-	cursorMode = kVertical;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+(i+1)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT, 180*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
-	
-	width--;
-	cursorMode = kHorizontal;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*3*2*PTM_RATIO/PTM_RATIO_DEFAULT, 216*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
-	
-	cursorMode = kVertical;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+(i+2)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT-32 *2*PTM_RATIO/PTM_RATIO_DEFAULT, 254*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
-	
-	width--;
-	cursorMode = kHorizontal;
-	for(int i = 0; i < width; i++)
-		[self addNewSpriteWithCoords:CGPointMake(800+i*64*2*PTM_RATIO/PTM_RATIO_DEFAULT+32*4*2*PTM_RATIO/PTM_RATIO_DEFAULT, 290*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kStick];
-	
-	[self addNewSpriteWithCoords:CGPointMake(800+128*2*PTM_RATIO/PTM_RATIO_DEFAULT,318*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kPig];
-
+	[self addNewSpriteWithCoords:CGPointMake(left+(height*.5)*64*2*PTM_RATIO/PTM_RATIO_DEFAULT,(-42+72*height)*2*PTM_RATIO/PTM_RATIO_DEFAULT) andType:kPig];
+	timeSinceBallLaunched = -1;
 }
 
--(void)initPopulationParameters {
-	/*
-	 jumping_probability = 0.1;
-	 jumping_strength = 300;
-	 jumping_angular_deviation = 0.9;
-	 bounciness = 0.1f;
-	 */
+-(void)updateAverageHeight {
+	double totalHeight = 0;
+	int countOfActors = 0;
+	
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()){
+		Actor *userData = (Actor *)b->GetUserData();
+		
+		if(userData && [userData isKindOfClass:[Actor class]] && ((Actor *)(userData)).type != kBird) {
+			totalHeight += b->GetPosition().y;
+			countOfActors++;
+		}
+	}
+	averageHeight = totalHeight/countOfActors;
 }
 
 -(void)resetSimulation {
-	
-	//NSMutableArray *bodiesToDestroy = [[NSMutableArray alloc] initWithCapacity:100];
-	
-	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()){
+		
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
 		Actor *userData = (Actor *)b->GetUserData();
 		
 		if(userData && [userData isKindOfClass:[Actor class]]) {
@@ -219,12 +199,6 @@ enum {
 			world->DestroyBody(b);
 		}
 	}
-	/*
-	while(bodiesToDestroy.count > 0) {
-		b2Body *b = (b2Body *)[bodiesToDestroy objectAtIndex:0];
-		[bodiesToDestroy removeObjectAtIndex:0];
-		world->DestroyBody(b);		
-	}*/
 	
 	[self buildTower];
 }
@@ -248,21 +222,7 @@ enum {
 }
 
 -(void) addNewSpriteWithCoords:(CGPoint)p andType:(ActorType)type
-{
-	//CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
-	//CCSpriteBatchNode *batch = (CCSpriteBatchNode*) [self getChildByTag:kTagBatchNode];
-	
-	//We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
-	//just randomly picking one of the images
-	//int idx = (CCRANDOM_0_1() > .5 ? 0:1);
-	//int idx = (int)(CCRANDOM_0_1() * 5);
-	//int idy = (CCRANDOM_0_1() > .5 ? 0:1);
-	/*
-	 CCSprite *sprite = [CCSprite spriteWithBatchNode:batch rect:CGRectMake(32 * idx,32 * idy,32,32)];
-	 sprite = [[CCSprite alloc] initWithFile:@"tango.png"];
-	 sprite = [[CCSprite alloc] initWithFile:@"stick.png"];
-	 */
-	
+{	
 	Actor *newActor = [[Actor alloc] initWithType:type];
 	
 	CCSprite *sprite = newActor.sprite;
@@ -271,9 +231,7 @@ enum {
 	[self addChild:sprite];
 	
 	sprite.position = ccp( p.x, p.y);
-	
-	//Jumper *jumper = [[Jumper alloc] initWithSprite:sprite];
-	
+		
 	// Define the dynamic body.
 	//Set up a 1m squared box in the physics world
 	b2BodyDef bodyDef;
@@ -316,23 +274,22 @@ enum {
 	
 	
 	fixtureDef.density = newActor.density;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = newActor.friction;
 	fixtureDef.restitution = newActor.bounciness;
 	
 	body->CreateFixture(&fixtureDef);
 	
 	
 	if(cursorMode == kHorizontal) {
-		float angle = M_PI * 0.5; //or whatever you angle is
+		float angle = M_PI * 0.5; //or whatever your angle is
 		b2Vec2 pos = body->GetPosition();
 		body->SetTransform(pos, angle);
 	}
 	
 	if(newActor.type == kBird) {
-		double theta =  CCRANDOM_0_1() * M_PI * 0.25;
 		
-		double xForce = 100 * cos(theta);
-		double yForce = 100 * sin(theta);
+		double xForce = currentForce * cos(currentAngle);
+		double yForce = currentForce * sin(currentAngle);
 		
 		b2Vec2 force = b2Vec2(xForce, yForce);
 		body->ApplyLinearImpulse(force, body->GetPosition());
@@ -345,15 +302,15 @@ enum {
 
 -(void) tick: (ccTime) dt
 {
-	//It is recommended that a fixed time step is used with Box2D for stability
-	//of the simulation, however, we are using a variable time step here.
-	//You need to make an informed choice, the following URL is useful
-	//http://gafferongames.com/game-physics/fix-your-timestep/
 	
-	int32 velocityIterations = 128;
-	int32 positionIterations = 128;
+	if(timeSinceBallLaunched >= 0)
+		timeSinceBallLaunched += dt;
+	
+	int32 velocityIterations = 8;
+	int32 positionIterations = 1;
 
-	world->Step(dt*0.5, velocityIterations, positionIterations);
+	world->Step(1.0/120.0, velocityIterations, positionIterations);
+	//world->Step(1.0/120.0, velocityIterations, positionIterations);
 	
 	b2Body *highestStationaryBody = NULL;
 	CGPoint positionOfHighest = CGPointMake(0, -9999);
@@ -376,6 +333,78 @@ enum {
 			actor.sprite.rotation = -1 * CC_RADIANS_TO_DEGREES(b->GetAngle());
 		}	
 	}
+	
+	[self updateAverageHeight];
+	heightLabel.string =[NSString stringWithFormat:@"Avg height: %.2f", averageHeight];
+	
+	if(timeSinceBallLaunched > 10) 
+		[self runNextSuccessor];
+}
+
+-(void)recordResults {
+	NSLog(@" ");
+	NSLog(@"Height\t%.2f", averageHeight);
+	NSLog(@"Angle\t%.2f", currentAngle);
+	NSLog(@"Force\t%.2f", currentForce);
+	
+	SimulationResult *result = [[SimulationResult alloc] init];
+	result.angle = currentAngle;
+	result.force = currentForce;
+	result.heightAfterSimulation = averageHeight;
+	[simulationResults addObject:result];
+}
+
+-(void)runNextSuccessor {
+	timeSinceBallLaunched = 0;
+	[self recordResults];
+	
+	switch (simulationState) {
+		case kInitialState:
+			simulationState = kSuccessorAnglePlus;
+			currentAngle+=.01;
+			break;
+		case kSuccessorAnglePlus:
+			simulationState = kSuccessorAngleMinus;
+			currentAngle -=.02;
+			break;
+		case kSuccessorAngleMinus:
+			simulationState = kSuccessorForcePlus;
+			currentAngle+=.01;
+			currentForce++;
+			break;
+		case kSuccessorForcePlus:
+			simulationState = kSuccessorForceMinus;
+			currentForce-=2;
+			break;
+		case kSuccessorForceMinus:
+			simulationState = kInitialState;
+			[self selectBestSuccessor];
+			break;
+		default:
+			break;
+	}
+	
+	[self resetSimulation];
+	[self fireBird];
+}
+
+-(void)selectBestSuccessor {
+	SimulationResult *bestResult = nil;
+	
+	for(SimulationResult *s in simulationResults)
+		if(bestResult == nil || s.heightAfterSimulation < bestResult.heightAfterSimulation)
+			bestResult = s;
+	
+	currentAngle = bestResult.angle;
+	currentForce = bestResult.force;
+	
+	NSLog(@"Selecting result with height %f", bestResult.heightAfterSimulation);
+}
+
+-(void)generateNextSuccessors {
+	[self recordResults];
+
+	[self resetSimulation];
 }
 
 //not yet implemented
@@ -408,7 +437,7 @@ enum {
 	b2Vec2 gravity;
 	gravity.Set(0.0f, 50-CCRANDOM_0_1()*100);
 	
-	NSLog(@"%i",[keyPressed intValue]);
+	//NSLog(@"%i",[keyPressed intValue]);
 	switch ([keyPressed intValue]) {
 		case KEYBOARD_A:
 			[self changeCursorOrientation];
@@ -421,6 +450,7 @@ enum {
 			break;
 		case KEYBOARD_SPACE:
 			[self fireBird];
+			currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
 			break;
 		default:
 			break;
@@ -431,6 +461,7 @@ enum {
 
 -(void)fireBird {
 	[self addNewSpriteWithCoords:CGPointMake(50, 50) andType:kBird];
+	timeSinceBallLaunched = 0;
 }
 
 -(void)changeCursorOrientation {

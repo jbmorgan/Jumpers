@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B49833FB15557D3F006DB062 /* pig.png in Resources */ = {isa = PBXBuildFile; fileRef = B49833FA15557D3F006DB062 /* pig.png */; };
+		B49833FF1555D4FC006DB062 /* SimulationResult.m in Sources */ = {isa = PBXBuildFile; fileRef = B49833FE1555D4FC006DB062 /* SimulationResult.m */; };
 		B498350C155355E700D668EF /* tango.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350B155355E700D668EF /* tango.png */; };
 		B498350F1553618600D668EF /* stick.png in Resources */ = {isa = PBXBuildFile; fileRef = B498350E1553618600D668EF /* stick.png */; };
 		B49835121553637A00D668EF /* Actor.m in Sources */ = {isa = PBXBuildFile; fileRef = B49835111553637A00D668EF /* Actor.m */; };
@@ -149,6 +150,8 @@
 
 /* Begin PBXFileReference section */
 		B49833FA15557D3F006DB062 /* pig.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pig.png; sourceTree = "<group>"; };
+		B49833FD1555D4FC006DB062 /* SimulationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SimulationResult.h; sourceTree = "<group>"; };
+		B49833FE1555D4FC006DB062 /* SimulationResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulationResult.m; sourceTree = "<group>"; };
 		B498350B155355E700D668EF /* tango.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tango.png; sourceTree = "<group>"; };
 		B498350E1553618600D668EF /* stick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stick.png; sourceTree = "<group>"; };
 		B49835101553637A00D668EF /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actor.h; sourceTree = "<group>"; };
@@ -494,6 +497,8 @@
 				B4C35062153F56D100AEEE43 /* Resources */,
 				B4C3506F153F56D200AEEE43 /* libs */,
 				B4C351EF153F56D500AEEE43 /* Supporting Files */,
+				B49833FD1555D4FC006DB062 /* SimulationResult.h */,
+				B49833FE1555D4FC006DB062 /* SimulationResult.m */,
 			);
 			path = JumpersBox2D;
 			sourceTree = "<group>";
@@ -1096,6 +1101,7 @@
 				B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */,
 				B4C35207153F5FB700AEEE43 /* Jumper.m in Sources */,
 				B49835121553637A00D668EF /* Actor.m in Sources */,
+				B49833FF1555D4FC006DB062 /* SimulationResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

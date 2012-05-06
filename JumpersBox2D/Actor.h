@@ -25,5 +25,7 @@ typedef enum ActorType {
 @property ActorType type;
 @property Float32 bounciness;
 @property Float32 density;
+@property Float32 friction;
+
 
 @end
