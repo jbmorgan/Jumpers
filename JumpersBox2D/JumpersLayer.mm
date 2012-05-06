@@ -15,13 +15,14 @@
 //This ratio defines how many pixels correspond to 1 Box2D "metre"
 //Box2D is optimized for objects of 1x1 metre therefore it makes sense
 //to define the ratio so that your most common object type is 1x1 metre.
-#define PTM_RATIO 8
+#define PTM_RATIO 16
 #define PTM_RATIO_DEFAULT 32.0
 
 #define KEYBOARD_A 97
 #define KEYBOARD_SPACE 32
 
-#define HIGH_ACCURACY
+#define ANGLE_STEP_SIZE 0.01
+#define FORCE_STEP_SIZE 2
 
 #define WORLD_BOUNDS_EXTRA_WIDTH 10000
 
@@ -37,7 +38,7 @@ enum {
 // JumpersLayer implementation
 @implementation JumpersLayer
 
-@synthesize actors, simulationResults, cursorSprite, cursorMode, averageHeight, heightLabel, currentAngle, currentForce, timeSinceBallLaunched, simulationState;
+@synthesize actors, simulationResults, cursorSprite, cursorMode, averageHeight, heightLabel, currentAngle, currentForce, timeSinceBallLaunched, simulationState, lastSuccessor;
 
 +(CCScene *) scene
 {
@@ -143,6 +144,7 @@ enum {
 		currentAngle =  (CCRANDOM_0_1()-.5) * M_PI/4+M_PI/8;
 
 		simulationState = kInitialState;
+		lastSuccessor = nil;
 		
 		[[CCEventDispatcher sharedDispatcher] addKeyboardDelegate:self priority:0];		
 		
@@ -155,7 +157,7 @@ enum {
 	
 	int width = 10;
 	int height = width-1;
-	int left = 500;
+	int left = 600;
 	
 	for(int level = 0; level < height; level++) {
 		
@@ -302,14 +304,13 @@ enum {
 
 -(void) tick: (ccTime) dt
 {
-	
 	if(timeSinceBallLaunched >= 0)
 		timeSinceBallLaunched += dt;
 	
 	int32 velocityIterations = 8;
 	int32 positionIterations = 1;
 
-	world->Step(1.0/120.0, velocityIterations, positionIterations);
+	world->Step(1.0/90.0, velocityIterations, positionIterations);
 	//world->Step(1.0/120.0, velocityIterations, positionIterations);
 	
 	b2Body *highestStationaryBody = NULL;
@@ -361,20 +362,20 @@ enum {
 	switch (simulationState) {
 		case kInitialState:
 			simulationState = kSuccessorAnglePlus;
-			currentAngle+=.01;
+			currentAngle += ANGLE_STEP_SIZE;
 			break;
 		case kSuccessorAnglePlus:
 			simulationState = kSuccessorAngleMinus;
-			currentAngle -=.02;
+			currentAngle -= 2 * ANGLE_STEP_SIZE;
 			break;
 		case kSuccessorAngleMinus:
 			simulationState = kSuccessorForcePlus;
-			currentAngle+=.01;
-			currentForce++;
+			currentAngle += ANGLE_STEP_SIZE;
+			currentForce += FORCE_STEP_SIZE;
 			break;
 		case kSuccessorForcePlus:
 			simulationState = kSuccessorForceMinus;
-			currentForce-=2;
+			currentForce -= 2 * FORCE_STEP_SIZE;
 			break;
 		case kSuccessorForceMinus:
 			simulationState = kInitialState;
@@ -399,6 +400,12 @@ enum {
 	currentForce = bestResult.force;
 	
 	NSLog(@"Selecting result with height %f", bestResult.heightAfterSimulation);
+	
+	if(!lastSuccessor || bestResult.heightAfterSimulation < lastSuccessor.heightAfterSimulation)
+		lastSuccessor = bestResult;
+	else {
+		NSLog(@"Local maximum found!");
+	}
 }
 
 -(void)generateNextSuccessors {
@@ -447,6 +454,7 @@ enum {
 			break;
 		case 114:
 			[self resetSimulation];
+			lastSuccessor = nil;
 			break;
 		case KEYBOARD_SPACE:
 			[self fireBird];

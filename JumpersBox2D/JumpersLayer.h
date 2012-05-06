@@ -11,6 +11,9 @@
 #import "Box2D.h"
 #import "GLES-Render.h"
 #import "Actor.h"
+
+@class SimulationResult;
+
 // JumpersLayer
 
 typedef enum CursorMode {
@@ -50,5 +53,6 @@ typedef enum SimulationState {
 @property double currentAngle;
 @property double currentForce;
 @property double timeSinceBallLaunched;
+@property (nonatomic, retain) SimulationResult *lastSuccessor;
 
 @end
