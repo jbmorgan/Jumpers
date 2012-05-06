@@ -65,9 +65,6 @@ enum {
 		srandom(time(NULL));
 		CCLayerColor *colorLayer = [[CCLayerColor alloc] initWithColor:ccc4(135, 190, 224, 255)];
 		[self addChild:colorLayer z:0];
-
-		// enable touches
-		//self.isMouseEnabled = YES;
 		
 		actors = [[NSMutableArray alloc] initWithCapacity:50];
 		simulationResults = [[NSMutableArray alloc] initWithCapacity:50];
@@ -164,6 +161,8 @@ enum {
 	return self;
 }
 
+//builds the stick tower to destroy
+//changing the width will make a larger or smaller tower
 -(void)buildTower {
 	
 	int width = 10;
@@ -187,6 +186,7 @@ enum {
 	timeSinceBallLaunched = -1;
 }
 
+//updates the average height of all bodies in the simulation
 -(void)updateAverageHeight {
 	double totalHeight = 0;
 	int countOfActors = 0;
@@ -202,8 +202,8 @@ enum {
 	averageHeight = totalHeight/countOfActors;
 }
 
+//destroys and recreates all bodies in the simulation
 -(void)resetSimulation {
-		
 	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
 		Actor *userData = (Actor *)b->GetUserData();
 		
@@ -234,6 +234,7 @@ enum {
 	
 }
 
+//adds a new body of the given type at the given location
 -(void) addNewSpriteWithCoords:(CGPoint)p andType:(ActorType)type
 {	
 	Actor *newActor = [[Actor alloc] initWithType:type];
@@ -309,8 +310,7 @@ enum {
 	[actors addObject:newActor];
 }
 
-
-
+//run the next cycle in the simulation
 -(void) tick: (ccTime) dt
 {
 	if(timeSinceBallLaunched >= 0)
@@ -319,6 +319,7 @@ enum {
 	int32 velocityIterations = 8;
 	int32 positionIterations = 1;
 
+	//we're using a fixed time step so we get the same results every time
 	world->Step(1.0/90.0, velocityIterations, positionIterations);
 	
 	//Iterate over the bodies in the physics world
@@ -340,6 +341,7 @@ enum {
 		[self runNextSuccessor];
 }
 
+//saves the results of a particular run
 -(void)recordResults {
 	NSLog(@" ");
 	NSLog(@"Height\t%.2f", averageHeight);
@@ -353,6 +355,7 @@ enum {
 	[simulationResults addObject:result];
 }
 
+//figures out which successor is next, sets it up, and runs it
 -(void)runNextSuccessor {
 	if(simulationState == kCompleted)
 		return;
@@ -390,6 +393,7 @@ enum {
 	[self fireBird];
 }
 
+//choses the best of all successors or chooses none of them if the parent state was the best
 -(void)selectBestSuccessor {
 	SimulationResult *bestResult = nil;
 	
@@ -420,6 +424,8 @@ enum {
 	[self resetSimulation];
 }
 
+//determines whether a body is stationary
+//no longer used
 -(BOOL)isStationary:(b2Body *)b {
 	
 	if( b->GetLinearVelocity().Length() < 0.1)
@@ -473,11 +479,14 @@ enum {
 	return TRUE;
 }
 
+//fires a new bird at the tower
 -(void)fireBird {
 	[self addNewSpriteWithCoords:CGPointMake(50, 50) andType:kBird];
 	timeSinceBallLaunched = 0;
 }
 
+//used for the level building tool
+//not currently used
 -(void)changeCursorOrientation {
 	if(cursorMode == kVertical) {
 		cursorMode = kHorizontal;
