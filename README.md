@@ -1,1 +1,2 @@
-# This is my README
+# Jumpers
+Jumpers was made as a project for an undergratuate introduction to AI class. It uses hill climbing to find the best angle and force with which to throw a round object to knock down a tower. It definitely does not resemble any company's copywritten intellectual property.
