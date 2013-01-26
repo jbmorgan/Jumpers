@@ -145,7 +145,6 @@
 		B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4C351FA153F56D500AEEE43 /* GLES-Render.mm */; };
 		B4C351FD153F56D500AEEE43 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = B4C351FC153F56D500AEEE43 /* blocks.png */; };
 		B4C35204153F584000AEEE43 /* colors.png in Resources */ = {isa = PBXBuildFile; fileRef = B4C35203153F584000AEEE43 /* colors.png */; };
-		B4C35207153F5FB700AEEE43 /* Jumper.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C35206153F5FB700AEEE43 /* Jumper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -430,8 +429,6 @@
 		B4C351FA153F56D500AEEE43 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
 		B4C351FC153F56D500AEEE43 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
 		B4C35203153F584000AEEE43 /* colors.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colors.png; sourceTree = "<group>"; };
-		B4C35205153F5FB600AEEE43 /* Jumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Jumper.h; sourceTree = "<group>"; };
-		B4C35206153F5FB700AEEE43 /* Jumper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Jumper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -490,8 +487,6 @@
 				B4C351F4153F56D500AEEE43 /* AppDelegate.mm */,
 				B4C351F9153F56D500AEEE43 /* GLES-Render.h */,
 				B4C351FA153F56D500AEEE43 /* GLES-Render.mm */,
-				B4C35205153F5FB600AEEE43 /* Jumper.h */,
-				B4C35206153F5FB700AEEE43 /* Jumper.m */,
 				B4C351F6153F56D500AEEE43 /* JumpersLayer.h */,
 				B4C351F7153F56D500AEEE43 /* JumpersLayer.mm */,
 				B49833FD1555D4FC006DB062 /* SimulationResult.h */,
@@ -1099,7 +1094,6 @@
 				B4C351F5153F56D500AEEE43 /* AppDelegate.mm in Sources */,
 				B4C351F8153F56D500AEEE43 /* JumpersLayer.mm in Sources */,
 				B4C351FB153F56D500AEEE43 /* GLES-Render.mm in Sources */,
-				B4C35207153F5FB700AEEE43 /* Jumper.m in Sources */,
 				B49835121553637A00D668EF /* Actor.m in Sources */,
 				B49833FF1555D4FC006DB062 /* SimulationResult.m in Sources */,
 			);
